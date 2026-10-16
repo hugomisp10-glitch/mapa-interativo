@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Alsácia de Natal · mapa offline</title>
+<style>
+:root{--land:#e9efe4;--hill:#d3e2c6;--vine:#d9e28f;--water:#9fcbe6;--foreign:#dfe4e7;--old:#f2e7d4;--ink:#1c2b27;--mut:#5d6f69;--card:#fff;--line:#d3dcd8;--pine:#1f4d3d;--red:#b3202a;--gold:#e0a82e;--train:#c0261c;--bus:#1767b5;--tram:#7b3fb3;--st:#b9b2a3;--wy:#fff}
+@media(prefers-color-scheme:dark){:root{--land:#1b2925;--hill:#233a2e;--vine:#55642c;--water:#1d4a68;--foreign:#1f2a31;--old:#3a3328;--ink:#e8f0ec;--mut:#9db3ab;--card:#22322d;--line:#34463f;--pine:#0f2b22;--train:#ff7266;--bus:#6db3f2;--tram:#c9a0f2;--st:#4b5550;--wy:#2f3d38}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{display:flex;flex-direction:column;background:var(--land);color:var(--ink);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;padding-top:env(safe-area-inset-top,0)}
+header{background:var(--pine);color:#fff;padding:8px 12px 8px}
+h1{font:700 19px/1.1 Georgia,"Times New Roman",serif;margin:0}
+header small{display:block;color:#bcd5c9;font-size:12px;margin:2px 0 7px}
+.row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.row::-webkit-scrollbar{display:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.ch{white-space:nowrap;border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:16px;padding:4px 11px}
+.ch.on{background:#fff;color:var(--pine);border-color:#fff;font-weight:600}
+.ch i{display:inline-block;width:16px;border-top:3px solid;vertical-align:middle;margin-right:5px}
+#wrap{flex:1;position:relative;min-height:0;overflow:hidden}
+#m{width:100%;height:100%;display:block;touch-action:none;cursor:grab;background:var(--land)}
+#m .water{fill:var(--water)}#m .rv{fill:none;stroke:var(--water);stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.lb{paint-order:stroke;stroke:var(--land);stroke-width:4px;stroke-linejoin:round;fill:var(--ink);font-size:12px;pointer-events:none}
+.mk{cursor:pointer}.mk:focus-visible{outline:none}.mk:focus-visible .pp{stroke:var(--gold);stroke-width:4}
+.rg{font:italic 600 13px Georgia,serif;fill:var(--mut);letter-spacing:.12em;pointer-events:none;opacity:.8}
+.dt{transition:opacity .3s;pointer-events:none}
+.fab{position:absolute;right:10px;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:20px;box-shadow:0 2px 8px #0003}
+#sc{position:absolute;left:10px;bottom:10px;font-size:11px;color:var(--ink);background:var(--card);border-radius:6px;padding:2px 6px;border:1px solid var(--line)}
+#sc b{display:block;height:5px;border:2px solid var(--ink);border-top:0;margin-top:1px}
+.sheet{position:absolute;left:8px;right:8px;bottom:8px;margin:auto;max-width:540px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 6px 24px #0004;overflow:hidden;display:none;max-height:62%;flex-direction:column}
+.sheet.open{display:flex}
+.sb{overflow:auto;padding:10px 14px 12px}
+.sheet h2{font:700 18px/1.15 Georgia,serif;margin:0 0 2px}
+.tag{display:inline-block;font-size:11px;border-radius:9px;padding:1px 8px;background:var(--pine);color:#fff;margin:0 4px 4px 0}
+.tag.g{background:var(--gold);color:#2b2000}
+.sheet p{margin:6px 0}.sheet ul{margin:2px 0;padding-left:18px}
+.sheet svg.vg{display:block;width:100%;height:auto}
+.x{position:absolute;right:8px;top:8px;width:30px;height:30px;border-radius:15px;border:0;background:#0007;color:#fff;font-size:18px;line-height:1}
+.btn{border:1px solid var(--pine);background:var(--pine);color:#fff;border-radius:10px;padding:6px 12px;margin:2px 6px 2px 0}
+.btn.o{background:none;color:var(--ink);border-color:var(--line)}
+nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0)}
+nav button{flex:1;border:0;background:none;padding:9px 0;font-weight:600;color:var(--mut)}
+nav button.on{color:var(--red);box-shadow:inset 0 3px 0 var(--red)}
+#dr{max-height:78%}
+#dr input{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--land);color:var(--ink);font:inherit;margin-bottom:6px}
+.it{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:8px 2px}
+.it svg{flex:none}.it small{display:block;color:var(--mut)}
+.gh{font:700 12px system-ui;color:var(--mut);margin:10px 0 2px}
+.tj{border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin:0 0 8px;background:var(--land)}
+.tj b{font:700 15px Georgia,serif}.tj small{color:var(--mut)}
+#lg .sb{columns:2;font-size:13px}#lg .l{display:flex;gap:7px;align-items:center;margin:3px 0;break-inside:avoid}
+#hint{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:#000b;color:#fff;border-radius:14px;padding:5px 12px;font-size:12px;transition:opacity .6s;white-space:nowrap}
+@media(prefers-reduced-motion:reduce){.dt{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Alsácia de Natal</h1>
+  <small>Do aeroporto de Basileia a Colmar, Estrasburgo e às aldeias do vinho</small>
+  <div class="row" id="lay">
+    <button class="ch on" data-l="train"><i style="color:#ff9a90"></i>Comboio</button>
+    <button class="ch on" data-l="bus"><i style="color:#8cc4f7;border-top-style:dashed"></i>Autocarro</button>
+    <button class="ch on" data-l="tram"><i style="color:#d2b0f5"></i>Elétrico</button>
+    <button class="ch on" data-l="mk">🎄 Mercados</button>
+    <button class="ch on" data-l="vin">🍇 Rota dos Vinhos</button>
+  </div>
+</header>
+<div id="wrap">
+  <svg id="m" role="application" aria-label="Mapa da Alsácia"></svg>
+  <button class="fab" style="top:10px" id="zi" aria-label="Aproximar">+</button>
+  <button class="fab" style="top:56px" id="zo" aria-label="Afastar">−</button>
+  <button class="fab" style="top:102px;font-size:15px" id="lgb" aria-label="Legenda">?</button>
+  <div id="sc"></div><div id="hint">Arrasta e aproxima · toca nos ícones</div>
+  <div class="sheet" id="sh"><button class="x" id="shx" aria-label="Fechar">×</button><div class="sb" id="shc"></div></div>
+  <div class="sheet" id="lg"><button class="x" onclick="this.parentNode.classList.remove('open')">×</button><div class="sb"><h2>Legenda</h2><div id="lgc"></div></div></div>
+  <div class="sheet" id="dr"><div class="sb" id="drc"></div></div>
+</div>
+<nav><button class="on" data-t="map">🗺 Mapa</button><button data-t="tj">🚆 Trajetos</button><button data-t="lc">📍 Lugares</button></nav>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1e3a5f"/><stop offset="1" stop-color="#e9a58a"/></linearGradient>
+<pattern id="pn" width="7" height="8" patternUnits="userSpaceOnUse"><path d="M3.5 1l2 3.2h-4zM3.5 3.5l2.6 4h-5.2z" fill="#2f6b4a" opacity=".35"/></pattern>
+<symbol id="i-plane" viewBox="0 0 24 24"><path d="M21 15v-2l-8-5V3.5a1.5 1.5 0 00-3 0V8l-8 5v2l8-2.5V18l-2 1.5V21l3.5-1 3.5 1v-1.5L13 18v-5.5z"/></symbol>
+<symbol id="i-train" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7 3h10a3 3 0 013 3v9a3 3 0 01-3 3l2 3h-2.2l-1.6-3H9.8l-1.6 3H6l2-3a3 3 0 01-3-3V6a3 3 0 013-3zm0 3v4h10V6zm1.5 8.2a1.3 1.3 0 100 2.6 1.3 1.3 0 000-2.6zm7 0a1.3 1.3 0 100 2.6 1.3 1.3 0 000-2.6z"/></symbol>
+<symbol id="i-tram" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7 5h10a3 3 0 013 3v8a3 3 0 01-3 3l2 3h-2.2l-1.6-3H9.8l-1.6 3H6l2-3a3 3 0 01-3-3V8a3 3 0 013-3zm0 3v4h10V8zm1.5 6.2a1.3 1.3 0 100 2.6 1.3 1.3 0 000-2.6zm7 0a1.3 1.3 0 100 2.6 1.3 1.3 0 000-2.6zM8 1.5h8v1.6H8z"/></symbol>
+<symbol id="i-cath" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 1l1.6 5h-3.2zM10.4 7h3.2v4h-3.2zM9 11h6v11H9zM4 15h5v7H4zm11 0h5v7h-5zm-4 7v-4a1 1 0 012 0v4z"/></symbol>
+<symbol id="i-house" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 3l10 8h-3v10H5V11H2zm-2 18h4v-5h-4z"/></symbol>
+<symbol id="i-castle" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 21V6h3v2h2V6h3v2h4V6h3v2h2V6h3v15zm8 0h4v-5a2 2 0 00-4 0z"/></symbol>
+<symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 1l4.5 7h-2.5l4 6h-3.5l4 6H5.5l4-6H6l4-6H7.5zM11 20h2v3h-2z"/></symbol>
+<symbol id="i-boat" viewBox="0 0 24 24"><path d="M2 15h20l-3 6H5zM11 3h2v9h-2zM13 3l7 8h-7z"/></symbol>
+<symbol id="i-bus" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M5 3h14a2 2 0 012 2v12a2 2 0 01-1 1.7V21h-3v-2H7v2H4v-2.3A2 2 0 013 17V5a2 2 0 012-2zm0 3v5h14V6zm2.5 8a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm9 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"/></symbol>
+</defs></svg>
+
+<script>
+const NS='http://www.w3.org/2000/svg',$=id=>document.getElementById(id);
+const X=lon=>(lon-7)*743,Y=lat=>(48.85-lat)*1110;            // 10 unidades = 1 km
+const pts=a=>a.map(([la,lo])=>X(lo).toFixed(1)+','+Y(la).toFixed(1)).join(' ');
+const MKT='Mercados de Natal: em geral de finais de novembro a 24–31 dez. Confirma as datas de 2026 nos sites oficiais.';
+// tipo → [cor, ícone, nome na legenda, prioridade do rótulo, tamanho]
+const K={air:['#1767b5','plane','Aeroporto',0,1.15],city:['#b3202a','cath','Cidade',0,1.1],vil:['#d9822b','house','Aldeia',1,1],cast:['#6a4c93','castle','Castelo / monumento',2,.9],cath:['#b3202a','cath','Catedral / igreja',2,.9],canal:['#12808a','boat','Canais',2,.9],mkt:['#1f5a45','tree','Mercado de Natal',2,.9],st:['#37474f','train','Estação de comboio',3,.85],tram:['#7b3fb3','tram','Paragem de elétrico',3,.8]};
+// id,nome,tipo,lat,lon,lado,zoomMin,mercado,descrição,como chegar
+const D=[
+['bsl','EuroAirport Basel-Mulhouse-Freiburg','air',47.5896,7.5299,'l',1,0,'O aeroporto fica em território francês. Sai pelo lado França para usar os transportes alsacianos.','Autocarro 50 → Basel SBB (~20 min). Autocarro 11 → Saint-Louis (gare) (~15 min) e depois comboio TER.'],
+['baz','Basileia (Basel)','city',47.5560,7.5880,'r',1,1,'Cidade suíça junto à fronteira. Mercados de Natal em Münsterplatz e Barfüsserplatz.','Autocarro 50 desde o aeroporto até Basel SBB e elétrico para o centro.'],
+['bas','Basel SBB','st',47.5476,7.5896,'r',3,0,'Grande estação suíça, com TER para Mulhouse, Colmar e Estrasburgo.','Em francos suíços (CHF) para viagens na Suíça; para a França compra bilhete TER.'],
+['stl','Saint-Louis (gare)','st',47.5886,7.5575,'r',1.4,0,'Estação francesa mais próxima do aeroporto.','Comboio TER para Mulhouse (~15 min) e Colmar.'],
+['mul','Mulhouse','city',47.7418,7.3425,'r',1,1,'Cidade de museus. Mercado de Natal na Place de la Réunion, elétrico no centro.','Comboio TER desde Basel/Saint-Louis (~20 min).'],
+['cgare','Colmar (gare)','st',48.0713,7.3467,'l',6,0,'Estação de Colmar, a ~15 min a pé do centro.','TER Mulhouse (~25 min), Estrasburgo (~30 min). Autocarros Trace e Fluo.'],
+['col','Colmar','city',48.0794,7.3585,'r',1,1,'Cidade-base ideal: mercados no centro, casas de madeira, canais e museus.','A pé no centro. Dali saem os autocarros para as aldeias do vinho.'],
+['koi','Koïfhus (Ancienne Douane)','mkt',48.0785,7.3581,'r',7,1,'Edifício medieval com mercado de Natal na praça.','A pé do centro.'],
+['sm','Colleg. Saint-Martin','cath',48.0793,7.3579,'l',9,0,'Igreja gótica no coração da cidade velha.','A pé.'],
+['mdt','Maison des Têtes','cast',48.0790,7.3565,'l',9,0,'Casa renascentista coberta de cabeças esculpidas.','A pé.'],
+['dom','Place des Dominicains','mkt',48.0788,7.3548,'l',7,1,'Mercado de Natal junto à igreja dos Dominicanos.','A pé.'],
+['unt','Musée Unterlinden','cast',48.0803,7.3511,'l',8,0,'Museu com o Retábulo de Issenheim, em antigo convento.','A pé do centro (~10 min).'],
+['pv','Petite Venise','canal',48.0745,7.3555,'r',6,1,'Canais, casas coloridas e barcos. Mercado de Natal junto à água.','A pé do centro (~10 min).'],
+['egu','Eguisheim','vil',48.0434,7.3066,'l',1,1,'Aldeia circular com ruas concêntricas e mercado acolhedor.','Autocarro Trace desde Colmar (linha 6, confirmar).'],
+['tur','Turckheim','vil',48.0889,7.2760,'l',1,1,'Aldeia fortificada. Mercado de Natal e ronda do guarda-noturno.','Comboio TER Colmar → Turckheim (~10 min).'],
+['kay','Kaysersberg','vil',48.1386,7.2644,'l',1,1,'Terra de Albert Schweitzer, com castelo e ponte fortificada.','Autocarro Fluo desde Colmar (~30 min, confirmar linha).'],
+['rqw','Riquewihr','vil',48.1667,7.2970,'r',1,1,'Uma das aldeias mais bonitas de França. Mercado de Natal medieval.','Autocarro Fluo desde Colmar (linha 106, confirmar).'],
+['rib','Ribeauvillé','vil',48.1950,7.3190,'r',1,1,'Três castelos sobre a vila. Mercado de Natal na Grand\'Rue.','Autocarro Fluo desde Colmar ou Sélestat (confirmar).'],
+['hk','Château du Haut-Kœnigsbourg','cast',48.2494,7.3444,'r',1,0,'Castelo medieval reconstruído, muito visível do vale.','De Sélestat: navette sazonal (confirmar) ou táxi (~20 min).'],
+['sel','Sélestat','city',48.2603,7.4509,'r',1,1,'Cidade humanista e berço histórico da tradição da árvore de Natal.','TER Colmar (~15 min) e Estrasburgo (~25 min).'],
+['obe','Obernai','vil',48.4616,7.4812,'r',1,1,'Centro medieval, poço de Seis Baldes e mercado de Natal bonito.','TER Estrasburgo → Obernai (~25 min).'],
+['str','Estrasburgo','city',48.5839,7.7455,'r',1,1,'"Capitale de Noël": o maior mercado da região, espalhado pela cidade velha.','TER desde Basel/Colmar. Na cidade, elétrico (não há metro).'],
+['sgare','Estrasburgo (gare)','st',48.5850,7.7352,'l',6,0,'Estação central, junto à linha A/D do elétrico.','Elétrico A/D → Homme de Fer (~5 min).'],
+['hdf','Homme de Fer','tram',48.5843,7.7485,'r',8,0,'Principal nó de elétricos do centro.','A pé até à Catedral (~5 min).'],
+['kle','Place Kléber','mkt',48.5838,7.7455,'l',8,1,'Praça com o grande abeto de Natal.','Elétrico A/D até Homme de Fer, depois a pé.'],
+['bro','Place Broglie','mkt',48.5855,7.7503,'r',9,1,'Mercado de Natal com artesanato e comida.','A pé.'],
+['cat','Catedral de Estrasburgo','cath',48.5819,7.7511,'r',4,1,'Catedral gótica em arenito rosa, e Christkindelsmärik na praça.','A pé desde Homme de Fer.'],
+['pet','Petite France','canal',48.5802,7.7387,'l',6,1,'Casas enxaimel, canais, Pontes Cobertas e mercado de Natal.','A pé do centro (~15 min).']
+];
+const P={};D.forEach(d=>{const k=K[d[2]];P[d[0]]={id:d[0],n:d[1],t:d[2],lat:d[3],lon:d[4],s:d[5],z:d[6],mk:d[7],d:d[8],h:d[9],x:X(d[4]),y:Y(d[3]),pr:k[3],sz:k[4]}});
+const L=[ // modo, nome, paragens, info
+['train','TER Basel – Mulhouse – Colmar – Sélestat – Estrasburgo',['bas','stl','mul','cgare','sel','sgare'],'Linha principal. Basel → Colmar ~50–60 min, Basel → Estrasburgo ~1h15–1h30. Bilhetes na SNCF Connect ou nas máquinas das estações.'],
+['train','TER Colmar – Turckheim',['cgare','tur'],'~10 min, vale de Munster.'],
+['train','TER Estrasburgo – Obernai',['sgare','obe'],'~25 min.'],
+['bus','Autocarro 50: aeroporto – Basel SBB',['bsl','bas'],'~20 min, frequente.'],
+['bus','Autocarro 11: aeroporto – Saint-Louis',['bsl','stl'],'~15 min, liga ao comboio francês.'],
+['bus','Autocarro Colmar – Eguisheim',['col','egu'],'Rede Trace (confirmar linha e horários).'],
+['bus','Autocarro Colmar – Kaysersberg',['col','kay'],'Rede Fluo Grand Est (confirmar).'],
+['bus','Autocarro Colmar – Riquewihr – Ribeauvillé – Sélestat',['col','rqw','rib','sel'],'Rede Fluo Grand Est (linha 106, confirmar).'],
+['bus','Sélestat – Haut-Kœnigsbourg',['sel','hk'],'Navette sazonal (confirmar) ou táxi.'],
+['tram','Elétrico A/D: Gare – Homme de Fer',['sgare','hdf'],'Estrasburgo tem elétrico, não metro. ~5 min.']
+];
+const TJ=[ // título, duração, texto, linhas
+['Aeroporto → Colmar','~1h15–1h30','Autocarro 11 até Saint-Louis (gare), depois TER via Mulhouse até Colmar.',[4,0],'col'],
+['Aeroporto → Estrasburgo','~1h45–2h','Autocarro 50 até Basel SBB (ou 11 até Saint-Louis) e TER direto para Estrasburgo.',[3,4,0],'str'],
+['Colmar → Riquewihr, Ribeauvillé, Kaysersberg','~30–40 min','Autocarros Fluo a partir de Colmar. Confirma linhas e últimos horários.',[7,6],'rqw'],
+['Colmar → Eguisheim e Turckheim','10–20 min','Eguisheim de autocarro, Turckheim de comboio.',[5,1],'egu'],
+['Estrasburgo → Obernai','~25 min','TER direto. Boa aldeia para uma tarde.',[2],'obe'],
+['Sélestat → Haut-Kœnigsbourg','~20 min','Navette sazonal ou táxi.',[8],'hk'],
+['Dentro de Estrasburgo','5–15 min','Elétrico A/D até Homme de Fer e depois a pé: Kléber, Catedral, Petite France.',[9],'str']
+];
+const svg=$('m');
+const E=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a||{})e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e};
+const poly=(a,at,p)=>E('polygon',Object.assign({points:pts(a)},at),p),line=(a,at,p)=>E('polyline',Object.assign({points:pts(a),fill:'none'},at),p);
+const NS_={'vector-effect':'non-scaling-stroke'};
+// ---------- mapa base
+poly([[47.40,6.9],[47.50,6.9],[47.505,7.50],[47.565,7.52],[47.575,7.58],[47.60,7.60],[47.40,7.7]],{style:'fill:var(--foreign)'});
+const rhine=[[47.585,7.60],[47.62,7.58],[47.70,7.54],[47.85,7.55],[48.0,7.57],[48.15,7.62],[48.32,7.72],[48.45,7.78],[48.58,7.81],[48.70,7.88],[48.85,7.92]];
+poly(rhine.concat([[48.85,8.3],[47.6,8.3]]),{style:'fill:var(--foreign)'});
+poly([[48.85,6.9],[48.85,7.30],[48.74,7.30],[48.46,7.42],[48.26,7.40],[48.19,7.31],[48.09,7.25],[47.9,7.17],[47.8,7.1],[47.8,6.9]],{style:'fill:var(--hill)'});
+poly([[48.85,6.9],[48.85,7.28],[48.7,7.27],[48.45,7.34],[48.2,7.27],[48.0,7.15],[47.8,7.04],[47.8,6.9]],{fill:'url(#pn)'});
+poly([[48.85,7.93],[48.85,8.3],[47.7,8.3],[47.7,7.80],[48.0,7.78],[48.3,7.80],[48.55,7.93]],{style:'fill:var(--hill)'});
+poly([[48.85,7.93],[48.85,8.3],[47.7,8.3],[47.7,7.80],[48.0,7.78],[48.3,7.80],[48.55,7.93]],{fill:'url(#pn)'});
+const wine=[[48.62,7.49],[48.4616,7.4812],[48.41,7.45],[48.30,7.42],[48.25,7.36],[48.195,7.319],[48.1667,7.297],[48.1386,7.2644],[48.0889,7.276],[48.0434,7.3066],[47.96,7.30],[47.91,7.21],[47.81,7.10]];
+const gv=E('g');line(wine,{style:'stroke:var(--vine)','stroke-width':11,'stroke-linecap':'round','stroke-linejoin':'round',opacity:.9},gv);
+const rr=line(rhine,{class:'rv','stroke-width':8});
+line([[47.60,7.37],[47.74,7.37],[47.90,7.40],[48.07,7.37],[48.25,7.47],[48.40,7.58],[48.55,7.72],[48.58,7.75]],{class:'rv','stroke-width':3});
+line([[47.60,7.56],[47.76,7.40],[47.90,7.41],[48.07,7.40],[48.26,7.47],[48.45,7.62],[48.55,7.74]],{style:'stroke:var(--st)','stroke-width':2.5,'stroke-dasharray':'1 0'},E('g')).setAttribute('vector-effect','non-scaling-stroke');
+const wr=line(wine,{style:'stroke:#c4903a','stroke-width':2,'stroke-dasharray':'2 4','stroke-linecap':'round'},gv);wr.setAttribute('vector-effect','non-scaling-stroke');
+const RG=[];const rg=(t,la,lo,s)=>{const e=E('text',{x:X(lo),y:Y(la),'text-anchor':'middle',class:'rg'});e.textContent=t;e.dataset.s=s;RG.push(e)};
+rg('VOSGES',48.40,7.20,14);rg('FLORESTA NEGRA',48.30,8.05,13);rg('ALEMANHA',48.65,8.0,13);rg('SUÍÇA',47.50,7.35,13);rg('Reno',48.20,7.665,11);rg('A35',47.99,7.43,10);rg('Rota dos Vinhos',48.33,7.36,10);
+// ---------- detalhe urbano (aparece com zoom)
+const det=[];
+function city(fn){const g=E('g',{class:'dt',opacity:0});fn(g);det.push(g)}
+city(g=>{ // Estrasburgo: Grande Île
+ poly([[48.5795,7.7395],[48.5835,7.7385],[48.5868,7.7415],[48.5872,7.7480],[48.5855,7.7530],[48.5822,7.7552],[48.5795,7.7525],[48.5792,7.7450]],{style:'fill:var(--old);stroke:var(--water);stroke-width:5;stroke-linejoin:round','vector-effect':'non-scaling-stroke'},g);
+ line([[48.5838,7.7455],[48.5832,7.7487],[48.5819,7.7511]],{style:'stroke:var(--wy);stroke-width:5;stroke-linecap:round','vector-effect':'non-scaling-stroke'},g);
+ line([[48.5843,7.7485],[48.5855,7.7503]],{style:'stroke:var(--wy);stroke-width:5','vector-effect':'non-scaling-stroke'},g);
+ line([[48.5838,7.7455],[48.5802,7.7387]],{style:'stroke:var(--wy);stroke-width:4;stroke-dasharray:1 7;stroke-linecap:round','vector-effect':'non-scaling-stroke'},g);
+ const t=E('text',{x:X(7.7505),y:Y(48.5802),class:'rg','text-anchor':'middle',style:'font-size:8px'},g);t.textContent='GRANDE ÎLE (UNESCO)';RG.push(t);t.dataset.s=9;});
+city(g=>{ // Colmar
+ poly([[48.0815,7.3520],[48.0820,7.3600],[48.0795,7.3635],[48.0768,7.3610],[48.0757,7.3560],[48.0772,7.3520],[48.0795,7.3505]],{style:'fill:var(--old);stroke:var(--st);stroke-width:2;stroke-dasharray:6 4','vector-effect':'non-scaling-stroke'},g);
+ line([[48.0738,7.3480],[48.0742,7.3530],[48.0746,7.3555],[48.0744,7.3600],[48.0752,7.3650]],{class:'rv','stroke-width':6},g);
+ line([[48.0713,7.3467],[48.0745,7.3500],[48.0775,7.3535],[48.0786,7.3560]],{style:'stroke:var(--tram);stroke-width:3;stroke-dasharray:2 6;stroke-linecap:round','vector-effect':'non-scaling-stroke'},g);
+ line([[48.0803,7.3511],[48.0788,7.3548],[48.0785,7.3581]],{style:'stroke:var(--wy);stroke-width:5;stroke-linecap:round','vector-effect':'non-scaling-stroke'},g);
+ const t=E('text',{x:X(7.3578),y:Y(48.0812),class:'rg','text-anchor':'middle'},g);t.textContent='CENTRO HISTÓRICO';RG.push(t);t.dataset.s=9;});
+// ---------- linhas
+const G={train:E('g'),bus:E('g'),tram:E('g')};
+L.forEach((l,i)=>{const p=l[2].map(id=>P[id].x+','+P[id].y).join(' '),b=l[0]=='bus';
+ l.v=E('polyline',{points:p,fill:'none',style:`stroke:var(--${l[0]})`,'stroke-width':b?3:4.5,'stroke-dasharray':b?'8 6':'none','stroke-linecap':'round','stroke-linejoin':'round','vector-effect':'non-scaling-stroke'},G[l[0]]);
+ E('polyline',{points:p,fill:'none',stroke:'transparent','stroke-width':22,'vector-effect':'non-scaling-stroke',style:'cursor:pointer'},G[l[0]]).addEventListener('click',e=>{e.stopPropagation();showLine(i)});});
+// ---------- ícones
+const gm=E('g');let showMk=true;
+Object.values(P).forEach(p=>{const k=K[p.t],g=E('g',{class:'mk',tabindex:0,role:'button','aria-label':p.n},gm);p.g=g;
+ g.innerHTML=`<path class="pp" d="M0 0L-9.4-14A13 13 0 1 1 9.4-14Z" fill="${k[0]}" stroke="#fff" stroke-width="2"/><use href="#i-${k[1]}" x="-8" y="-31" width="16" height="16" fill="#fff"/><g class="bd"><circle cx="11" cy="-35" r="7" fill="#e0a82e" stroke="#fff" stroke-width="1.5"/><use href="#i-tree" x="7" y="-39" width="8" height="8" fill="#1f3b2d"/></g><text class="lb" x="${p.s=='l'?-17:17}" y="-14" text-anchor="${p.s=='l'?'end':'start'}" font-weight="${p.pr<2?700:500}">${p.n}</text>`;
+ p.bd=g.querySelector('.bd');p.tx=g.querySelector('text');p.w=p.n.length*6.4+4;
+ g.addEventListener('click',e=>{e.stopPropagation();showPlace(p.id,1)});
+ g.addEventListener('keydown',e=>{if(e.key=='Enter')showPlace(p.id,1)});});
+// ---------- vista
+const vb={x:0,y:0,w:640,h:1300};let R,FW=640,sel=null,ob=[];
+function layout(){R=svg.getBoundingClientRect();FW=Math.max(600,1300*R.width/R.height)}
+function apply(){const k=vb.w/R.width;vb.h=R.height*k;svg.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+ const z=FW/vb.w,rects=[],items=[];
+ Object.values(P).forEach(p=>{const sx=(p.x-vb.x)/k,sy=(p.y-vb.y)/k,vis=z>=p.z&&sx>-60&&sx<R.width+60&&sy>-20&&sy<R.height+60;
+  p.g.style.display=vis?'':'none';if(!vis)return;
+  p.g.setAttribute('transform',`translate(${p.x} ${p.y}) scale(${k*p.sz*(sel==p.id?1.25:1)})`);
+  p.bd.style.display=p.mk&&showMk?'':'none';
+  rects.push([sx-14,sy-38,28,38]);items.push([p,sx,sy])});
+ items.sort((a,b)=>a[0].pr-b[0].pr||a[0].z-b[0].z);
+ items.forEach(([p,sx,sy])=>{const w=(p.w+(p.mk&&showMk?0:0))*p.sz,x=p.s=='l'?sx-17*p.sz-w:sx+17*p.sz,r=[x,sy-30*p.sz,w,16];
+  const ok=!rects.some(q=>r[0]<q[0]+q[2]&&r[0]+r[2]>q[0]&&r[1]<q[1]+q[3]&&r[1]+r[3]>q[1])||sel==p.id;
+  p.tx.style.display=ok?'':'none';if(ok)rects.push(r)});
+ RG.forEach(t=>{t.setAttribute('font-size',t.dataset.s*k*1.6);t.style.letterSpacing=(k*.12)+'em'});
+ det.forEach(g=>g.setAttribute('opacity',Math.min(1,Math.max(0,(z-4)/3))));
+ const km=[.05,.1,.2,.5,1,2,5,10,20].find(v=>v*10/k>=60)||20,w=km*10/k;$('sc').innerHTML=`${km<1?km*1000+' m':km+' km'}<b style="width:${w}px"></b>`}
+function go(cx,cy,w,ms=450){layout();const sw=vb.w,sc=[vb.x+vb.w/2,vb.y+vb.h/2],t0=performance.now(),dur=matchMedia('(prefers-reduced-motion:reduce)').matches?0:ms;
+ (function st(t){const f=dur?Math.min(1,(t-t0)/dur):1,e=f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;
+  vb.w=Math.exp(Math.log(sw)*(1-e)+Math.log(w)*e);const k=vb.w/R.width;vb.h=R.height*k;
+  vb.x=sc[0]+(cx-sc[0])*e-vb.w/2;vb.y=sc[1]+(cy-sc[1])*e-vb.h/2;apply();if(f<1)requestAnimationFrame(st)})(t0)}
+const home=()=>{layout();go(420,880,FW)};
+const ZW={air:80,city:110,vil:50,cast:30,cath:20,canal:20,mkt:20,st:30,tram:20};
+function zoomAt(cx,cy,f){const k=vb.w/R.width,wx=vb.x+(cx-R.left)*k,wy=vb.y+(cy-R.top)*k;vb.w=Math.min(FW*1.4,Math.max(8,vb.w/f));const k2=vb.w/R.width;vb.x=wx-(cx-R.left)*k2;vb.y=wy-(cy-R.top)*k2;apply()}
+const ptr=new Map();let drag=false,last=0;
+svg.addEventListener('pointerdown',e=>{ptr.set(e.pointerId,[e.clientX,e.clientY]);drag=false;last=0});
+svg.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const o=ptr.get(e.pointerId),n=[e.clientX,e.clientY];
+ if(ptr.size==1){if(!drag&&Math.hypot(n[0]-o[0],n[1]-o[1])>6){drag=true;svg.setPointerCapture(e.pointerId)}
+  if(drag){const k=vb.w/R.width;vb.x-=(n[0]-o[0])*k;vb.y-=(n[1]-o[1])*k;ptr.set(e.pointerId,n);apply()}}
+ else if(ptr.size==2){ptr.set(e.pointerId,n);const a=[...ptr.values()],d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);if(last)zoomAt((a[0][0]+a[1][0])/2,(a[0][1]+a[1][1])/2,d/last);last=d;drag=true}});
+const up=e=>{ptr.delete(e.pointerId);last=0};svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+svg.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,e.deltaY<0?1.3:.77)},{passive:false});
+svg.addEventListener('click',()=>{if(!drag){closeAll();hl([])}});
+$('zi').onclick=()=>zoomAt(R.left+R.width/2,R.top+R.height/2,1.7);$('zo').onclick=()=>zoomAt(R.left+R.width/2,R.top+R.height/2,.6);
+addEventListener('resize',()=>{layout();apply()});
+// ---------- vinhetas ilustradas
+const W='#ffd36a',SKY='<rect width="240" height="90" fill="url(#sky)"/><g fill="#fff"><circle cx="30" cy="14" r="1.3"/><circle cx="205" cy="12" r="1.3"/><circle cx="172" cy="26" r="1"/><circle cx="60" cy="30" r="1"/></g>',SNOW='<path d="M0 76Q60 68 120 74T240 72V90H0Z" fill="#f4f8fb"/>';
+const hs=(x,y,w,h,c,r)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/><path d="M${x-5} ${y+1}L${x+w/2} ${y-h*.6}L${x+w+5} ${y+1}Z" fill="${r}"/><path d="M${x} ${y+h*.4}H${x+w}M${x+w/2} ${y}V${y+h}" stroke="#5a3a28" stroke-width="1.6"/><rect x="${x+w*.12}" y="${y+h*.5}" width="6" height="8" fill="${W}"/><rect x="${x+w*.68}" y="${y+h*.5}" width="6" height="8" fill="${W}"/>`;
+const stall=x=>`<rect x="${x}" y="54" width="42" height="24" fill="#8b5a3c"/><path d="M${x-3} 54l4-12h38l4 12z" fill="#c0261c"/><path d="M${x+7} 42l-2 12M${x+19} 42v12M${x+31} 42l2 12" stroke="#fff" stroke-width="3"/><circle cx="${x+10}" cy="62" r="2" fill="${W}"/><circle cx="${x+21}" cy="62" r="2" fill="${W}"/><circle cx="${x+32}" cy="62" r="2" fill="${W}"/>`;
+const VG={
+vil:()=>SKY+hs(18,46,46,32,'#e9cfa4','#8a3b2e')+hs(80,38,52,40,'#e8b5a8','#6e2f2a')+hs(148,46,46,32,'#d9e4c0','#7a3b2e')+SNOW,
+city:()=>SKY+`<path d="M120 3l6 27h-12z" fill="#b5604a"/><rect x="109" y="30" width="22" height="48" fill="#c0735a"/><rect x="72" y="52" width="96" height="26" fill="#b5604a"/><path d="M116 78v-14a4 4 0 018 0v14z" fill="${W}"/>`+hs(20,56,36,22,'#e9cfa4','#8a3b2e')+hs(186,56,36,22,'#e8b5a8','#6e2f2a')+SNOW,
+cast:()=>SKY+'<path d="M0 78Q70 32 120 42T240 70V90H0Z" fill="#dfe8ee"/><rect x="92" y="30" width="56" height="22" fill="#a6574a"/><rect x="84" y="20" width="14" height="32" fill="#b8665a"/><rect x="142" y="20" width="14" height="32" fill="#b8665a"/><path d="M82 21l9-14 9 14zM140 21l9-14 9 14z" fill="#5b2e44"/><path d="M114 52v-8a6 6 0 0112 0v8z" fill="'+W+'"/>',
+canal:()=>SKY+`<g><rect x="10" y="32" width="38" height="32" fill="#e8b5a8"/><rect x="50" y="26" width="38" height="38" fill="#f2d98b"/><rect x="90" y="34" width="38" height="30" fill="#a9c9e0"/><rect x="130" y="28" width="38" height="36" fill="#d9e4c0"/><rect x="170" y="34" width="50" height="30" fill="#e8b5a8"/></g><path d="M8 33l21-14 21 14M48 27l21-15 21 15M88 35l21-12 21 12M128 29l21-14 21 14M168 35l27-14 27 14" fill="#7a3b2e"/><g fill="${W}"><rect x="20" y="42" width="6" height="8"/><rect x="62" y="38" width="6" height="8"/><rect x="104" y="44" width="6" height="8"/><rect x="144" y="40" width="6" height="8"/><rect x="190" y="44" width="6" height="8"/></g><rect y="64" width="240" height="26" fill="#2f5f84"/><path d="M0 74h60M80 80h70M30 84h50M160 74h60" stroke="#6fa3c8" stroke-width="1.5"/><path d="M104 70h40l-6 8h-28z" fill="#8b5a3c"/>`,
+mkt:()=>SKY+stall(10)+stall(188)+`<path d="M120 6l17 28h-10l13 20h-15l15 24h-40l15-24h-15l13-20h-10z" fill="#1f5a45"/><path d="M120 1l2 5h5l-4 3 1.500 5-4.500-3-4.500 3 1.500-5-4-3h5z" fill="#e0a82e"/><g fill="${W}"><circle cx="112" cy="40" r="1.8"/><circle cx="127" cy="52" r="1.8"/><circle cx="115" cy="62" r="1.8"/></g>`+SNOW,
+tr:()=>SKY+`<path d="M168 14l12 3-2 3 14 4-3 3-10-1-2 5-3-1 1-6-9-2z" fill="#fff"/><rect x="0" y="76" width="240" height="14" fill="#f4f8fb"/><path d="M0 80h240M0 86h240" stroke="#8a8f94" stroke-width="2"/><rect x="34" y="42" width="172" height="30" rx="8" fill="#b3202a"/><rect x="34" y="58" width="172" height="5" fill="#fff"/><g fill="${W}"><rect x="46" y="48" width="22" height="9" rx="2"/><rect x="76" y="48" width="22" height="9" rx="2"/><rect x="106" y="48" width="22" height="9" rx="2"/><rect x="136" y="48" width="22" height="9" rx="2"/><rect x="166" y="48" width="26" height="9" rx="2"/></g><circle cx="60" cy="74" r="5" fill="#333"/><circle cx="180" cy="74" r="5" fill="#333"/>`};
+const vg=t=>`<svg class="vg" viewBox="0 0 240 90">${VG[{vil:'vil',city:'city',cath:'city',cast:'cast',canal:'canal',mkt:'mkt',air:'tr',st:'tr',tram:'tr'}[t]]()}</svg>`;
+// ---------- painéis
+const sh=$('sh'),shc=$('shc');
+function closeAll(){['sh','lg','dr'].forEach(i=>$(i).classList.remove('open'));setNav('map');sel=null;apply()}
+function setNav(t){document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t==t))}
+$('shx').onclick=closeAll;
+function showPlace(id,fly){const p=P[id];sel=id;['lg','dr'].forEach(i=>$(i).classList.remove('open'));
+ const ls=L.map((l,i)=>l[2].includes(id)?`<li>${l[1]}</li>`:'').join('');
+ shc.innerHTML=`<div style="margin:-10px -14px 8px">${vg(p.t)}</div><h2>${p.n}</h2><span class="tag">${K[p.t][2]}</span>${p.mk?'<span class="tag g">🎄 Mercado de Natal</span>':''}<p>${p.d}</p><p><b>Como chegar:</b> ${p.h}</p>${p.mk?`<p style="font-size:12px;color:var(--mut)">${MKT}</p>`:''}${ls?`<p><b>Ligações</b></p><ul>${ls}</ul>`:''}<p style="font-size:11px;color:var(--mut)">Posições aproximadas. Confirma horários antes de viajar.</p>`;
+ sh.classList.add('open');setNav('map');if(fly)go(p.x,p.y-(p.t=='city'?0:0),ZW[p.t]);else apply()}
+function showLine(i){const l=L[i];sel=null;hl([i]);shc.innerHTML=`<h2>${l[1]}</h2><span class="tag">${{train:'Comboio',bus:'Autocarro',tram:'Elétrico'}[l[0]]}</span><p>${l[3]}</p><p style="color:var(--mut)">Paragens: ${l[2].map(id=>P[id].n).join(' → ')}</p><p style="font-size:11px;color:var(--mut)">Confirma sempre linhas e horários.</p>`;sh.classList.add('open')}
+function hl(a){L.forEach((l,i)=>{l.v.style.opacity=!a.length||a.includes(i)?1:.12;l.v.setAttribute('stroke-width',(l[0]=='bus'?3:4.5)*(a.includes(i)?1.7:1))})}
+function drawer(h){$('drc').innerHTML=h;['sh','lg'].forEach(i=>$(i).classList.remove('open'));$('dr').classList.add('open')}
+const chip=t=>`<svg width="30" height="30" viewBox="-14 -34 28 38"><path d="M0 0L-9.4-14A13 13 0 1 1 9.4-14Z" fill="${K[t][0]}"/><use href="#i-${K[t][1]}" x="-8" y="-31" width="16" height="16" fill="#fff"/></svg>`;
+function tabTJ(){setNav('tj');drawer('<h2 style="font:700 18px Georgia,serif;margin:0 0 8px">Trajetos a partir do aeroporto</h2>'+TJ.map((t,i)=>`<div class="tj"><b>${t[0]}</b> <small>· ${t[1]}</small><p style="margin:4px 0">${t[2]}</p><button class="btn" onclick="showTJ(${i})">Ver no mapa</button></div>`).join('')+'<p style="font-size:11px;color:var(--mut)">Durações indicativas. As linhas de autocarro de Colmar e arredores devem ser confirmadas na SNCF Connect, Fluo Grand Est e Trace.</p>')}
+function showTJ(i){const t=TJ[i];$('dr').classList.remove('open');setNav('map');hl(t[3]);const ps=[...new Set(t[3].flatMap(j=>L[j][2]))].map(id=>P[id]),x=ps.map(p=>p.x),y=ps.map(p=>p.y),w=Math.max(Math.max(...x)-Math.min(...x),(Math.max(...y)-Math.min(...y))*R.width/R.height)*1.5+40;go((Math.min(...x)+Math.max(...x))/2,(Math.min(...y)+Math.max(...y))/2,Math.max(60,w))}
+function tabLC(q=''){setNav('lc');const G=[['city','Cidades'],['vil','Aldeias'],['mkt','Mercados de Natal'],['cath','Monumentos'],['cast','Castelos e museus'],['canal','Canais'],['st','Estações'],['air','Aeroporto']];
+ const f=Object.values(P).filter(p=>p.n.toLowerCase().includes(q.toLowerCase()));
+ drawer(`<input id="q" placeholder="Procurar lugar…" value="${q}">`+G.map(([t,n])=>{const a=f.filter(p=>p.t==t||(t=='cath'&&p.t=='cath'));return a.length?`<div class="gh">${n}</div>`+a.map(p=>`<button class="it" onclick="showPlace('${p.id}',1)">${chip(p.t)}<span><b>${p.n}</b>${p.mk?' 🎄':''}<small>${K[p.t][2]}</small></span></button>`).join(''):''}).join(''));
+ const i=$('q');i.oninput=()=>{tabLC(i.value);$('q').focus();$('q').setSelectionRange(99,99)}}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{const t=b.dataset.t;if(t=='map'){closeAll();hl([])}else t=='tj'?tabTJ():tabLC()});
+$('lgb').onclick=()=>{$('dr').classList.remove('open');sh.classList.remove('open');$('lgc').innerHTML=Object.keys(K).map(t=>`<div class="l">${chip(t)}${K[t][2]}</div>`).join('')+`<div class="l"><svg width="30" height="12"><path d="M0 6h30" stroke="var(--train)" stroke-width="4"/></svg>Comboio</div><div class="l"><svg width="30" height="12"><path d="M0 6h30" stroke="var(--bus)" stroke-width="3" stroke-dasharray="7 5"/></svg>Autocarro</div><div class="l"><svg width="30" height="12"><path d="M0 6h30" stroke="var(--tram)" stroke-width="4"/></svg>Elétrico</div><div class="l"><svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="8" fill="#e0a82e"/><use href="#i-tree" x="10" y="10" width="10" height="10" fill="#1f3b2d"/></svg>Tem mercado de Natal</div>`;$('lg').classList.add('open')};
+document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{b.classList.toggle('on');const on=b.classList.contains('on'),l=b.dataset.l;
+ if(l=='mk'){showMk=on;apply()}else if(l=='vin')gv.style.display=on?'':'none';else G[l].style.display=on?'':'none'});
+home();setTimeout(()=>$('hint').style.opacity=0,5000);
+</script>
+</body>
+</html>
