@@ -3,6 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Mapa interativo da Alsácia no Natal: comboios, autocarros, elétricos, mercados de Natal e Rota dos Vinhos. Funciona offline.">
+<meta name="theme-color" content="#1f4d3d">
+<meta property="og:title" content="Alsácia de Natal · mapa">
+<meta property="og:description" content="Do aeroporto de Basileia a Colmar, Estrasburgo e às aldeias do vinho.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎄%3C/text%3E%3C/svg%3E">
 <title>Alsácia de Natal · mapa offline</title>
 <style>
 :root{--land:#e9efe4;--hill:#d3e2c6;--vine:#d9e28f;--water:#9fcbe6;--foreign:#dfe4e7;--old:#f2e7d4;--ink:#1c2b27;--mut:#5d6f69;--card:#fff;--line:#d3dcd8;--pine:#1f4d3d;--red:#b3202a;--gold:#e0a82e;--train:#c0261c;--bus:#1767b5;--tram:#7b3fb3;--st:#b9b2a3;--wy:#fff}
@@ -270,6 +276,88 @@ $('lgb').onclick=()=>{$('dr').classList.remove('open');sh.classList.remove('open
 document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{b.classList.toggle('on');const on=b.classList.contains('on'),l=b.dataset.l;
  if(l=='mk'){showMk=on;apply()}else if(l=='vin')gv.style.display=on?'':'none';else G[l].style.display=on?'':'none'});
 home();setTimeout(()=>$('hint').style.opacity=0,5000);
+</script>
+<script>
+// ---------- DETALHE URBANO: ruas + pontos de interesse (aparece com zoom) ----------
+(()=>{
+const C={v:['🏛','#6a4c93','Visitas'],m:['🎄','#1f5a45','Mercados'],c:['🥨','#d9822b','Comer'],t:['🚉','#37474f','Transportes']};
+const ell=(c,a,b,n=28)=>Array.from({length:n+1},(_,i)=>[c[0]+a*Math.sin(i*6.2832/n),c[1]+b*Math.cos(i*6.2832/n)]);
+// ruas: [nome, principal(1/0), pontos]   POIs: [nome, cat, lat, lon, texto]
+const T=[
+{id:'col',n:'Colmar',c:[48.0788,7.3560],
+ S:[['Av. de la République',1,[[48.0713,7.3467],[48.0745,7.3500],[48.0775,7.3535],[48.0786,7.3560]]],
+  ['Rue des Clefs',1,[[48.0803,7.3511],[48.0788,7.3548],[48.0785,7.3581]]],
+  ['Rue des Marchands',0,[[48.0798,7.3562],[48.0790,7.3568],[48.0783,7.3573]]],
+  ['Grand\'Rue',0,[[48.0772,7.3552],[48.0779,7.3570],[48.0783,7.3587]]],
+  ['Quai de la Poissonnerie',0,[[48.0746,7.3538],[48.0749,7.3560],[48.0746,7.3580]]]],
+ Q:[['Maison Pfister','v',48.0794,7.3563,'Casa de 1537 com varandas de madeira e frescos. Exterior visível a qualquer hora.'],
+  ['Musée Bartholdi','v',48.0798,7.3572,'Casa natal do escultor da Estátua da Liberdade. Bilhete pago; confirma horário.'],
+  ['Marché couvert','c',48.0757,7.3548,'Mercado coberto junto ao canal: queijos, charcutaria e comida rápida. Fecha cedo e ao domingo (confirmar).'],
+  ['Pont da Poissonnerie','v',48.0746,7.3556,'Melhor ponto de vista sobre os canais de Petite Venise, bom ao fim da tarde.']]},
+{id:'str',n:'Estrasburgo',c:[48.5832,7.7470],
+ S:[['Rue du 22 Novembre',1,[[48.5849,7.7355],[48.5845,7.7400],[48.5841,7.7440],[48.5841,7.7465]]],
+  ['Grand\'Rue',1,[[48.5842,7.7410],[48.5840,7.7440],[48.5838,7.7456]]],
+  ['Rue des Grandes Arcades',1,[[48.5837,7.7480],[48.5841,7.7463],[48.5838,7.7455]]],
+  ['Rue Mercière',0,[[48.5822,7.7505],[48.5829,7.7490],[48.5836,7.7480]]],
+  ['Rue du Bain-aux-Plantes',0,[[48.5800,7.7378],[48.5805,7.7395],[48.5810,7.7415],[48.5815,7.7445]]]],
+ Q:[['Maison Kammerzell','c',48.5820,7.7507,'Casa de 1427 junto à catedral, restaurante tradicional alsaciano. Reserva em época de Natal.'],
+  ['Palais Rohan','v',48.5807,7.7517,'Palácio barroco com três museus (Artes Decorativas, Belas-Artes, Arqueologia).'],
+  ['Musée Alsacien','v',48.5793,7.7506,'Vida tradicional alsaciana em casas ligadas entre si. Bilhete pago.'],
+  ['Place Gutenberg','m',48.5836,7.7480,'Mercado de Natal e estátua de Gutenberg, a 2 min de Kléber.'],
+  ['Marché-aux-Cochons-de-Lait','v',48.5817,7.7488,'Pequena praça pitoresca ao lado da catedral.'],
+  ['Ponts Couverts','v',48.5799,7.7378,'Pontes com torres medievais sobre o rio Ill, em Petite France.'],
+  ['Barrage Vauban','v',48.5793,7.7360,'Terraço panorâmico gratuito sobre as Pontes Cobertas.']]},
+{id:'egu',n:'Eguisheim',c:[48.0434,7.3066],
+ S:[['Rue du Rempart',1,ell([48.0434,7.3066],.0011,.0018)],['Rue des Rempart intérieur',0,ell([48.0434,7.3066],.0005,.0009)],
+  ['Grand\'Rue',0,[[48.0434,7.3040],[48.0434,7.3066]]]],
+ Q:[['Château Saint-Léon-IX','v',48.0434,7.3066,'Capela no centro da aldeia circular; ponto de partida do passeio.'],
+  ['Mercado de Natal','m',48.0433,7.3062,'Pequeno mercado na Place du Château, aberto sobretudo ao fim de semana (confirmar).'],
+  ['Église Saints-Pierre-et-Paul','v',48.0431,7.3057,'Igreja da aldeia, junto às ruas interiores.']]},
+{id:'rqw',n:'Riquewihr',c:[48.1667,7.2970],
+ S:[['Rue du Général de Gaulle',1,[[48.1668,7.2990],[48.1668,7.2970],[48.1667,7.2950]]],['Rue des Juifs',0,[[48.1668,7.2975],[48.1662,7.2978]]]],
+ Q:[['Le Dolder','v',48.1668,7.2971,'Torre-porta do século XIII com vista sobre a rua principal. Subida paga em certas épocas.'],
+  ['Tour des Voleurs','v',48.1666,7.2968,'Antiga prisão e câmara de tortura, hoje museu.'],
+  ['Mercado de Natal','m',48.1665,7.2960,'No pátio do castelo e na rua principal. Chega cedo: enche ao fim de semana.']]},
+{id:'kay',n:'Kaysersberg',c:[48.1388,7.2653],
+ S:[['Rue du Général de Gaulle',1,[[48.1395,7.2685],[48.1388,7.2655],[48.1383,7.2635],[48.1379,7.2618]]]],
+ Q:[['Pont fortifié','v',48.1383,7.2634,'Ponte do século XVI sobre o rio Weiss com capela. Foto obrigatória.'],
+  ['Église Sainte-Croix','v',48.1390,7.2664,'Igreja com retábulo do século XVI.'],
+  ['Château (ruínas)','v',48.1403,7.2653,'Pequena subida a pé; vista sobre a aldeia e as vinhas.']]}
+];
+const F={v:1,m:1,c:1,t:1},gs=[];let me=null;
+const G=E('g');
+T.forEach(t=>{t.x=X(t.c[1]);t.y=Y(t.c[0]);const g=E('g',{},G),s=E('g',{},g),q=E('g',{},g);g.style.display='none';t.g=g;t.l=[];t.q=[];
+ t.S.forEach(([n,mj,a])=>{const sg=E('g',{},s),pp=pts(a),at={points:pp,fill:'none','stroke-linecap':'round','stroke-linejoin':'round','vector-effect':'non-scaling-stroke'};
+  E('polyline',Object.assign({style:'stroke:var(--line)','stroke-width':mj?9:6},at),sg);E('polyline',Object.assign({style:'stroke:var(--wy)','stroke-width':mj?6:3.5},at),sg);
+  const i=(a.length-2)>>1,dx=X(a[i+1][1])-X(a[i][1]),dy=Y(a[i+1][0])-Y(a[i][0]);let ang=Math.atan2(dy,dx)*180/Math.PI;if(ang>90)ang-=180;if(ang<-90)ang+=180;
+  const e=E('text',{class:'lb','text-anchor':'middle',y:4,style:'font-size:10px'},sg);e.textContent=n;
+  t.l.push({g:sg,e,mj,x:X((a[i][1]+a[i+1][1])/2),y:Y((a[i][0]+a[i+1][0])/2),a:ang})});
+ t.Q.forEach(([n,c,la,lo,tx])=>{const k=C[c],pg=E('g',{class:'mk',tabindex:0,role:'button','aria-label':n},q);
+  pg.innerHTML=`<circle r="11" fill="${k[1]}" stroke="#fff" stroke-width="2"/><text y="4.5" text-anchor="middle" font-size="13">${k[0]}</text><text class="lb" x="15" y="4" style="font-size:11px">${n}</text>`;
+  const o={g:pg,c,x:X(lo),y:Y(la),t:pg.lastChild};t.q.push(o);
+  const open=ev=>{ev&&ev.stopPropagation();const qy=encodeURIComponent(n+', '+t.n+', France');closeAll();
+   $('shc').innerHTML=`<h2>${n}</h2><span class="tag">${k[0]} ${k[2]}</span><span class="tag g">${t.n}</span><p>${tx}</p><a class="btn" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${qy}&travelmode=walking">🚶 Ir a pé</a><a class="btn o" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${qy}">🗺 Ver no mapa</a><p style="font-size:12px;color:var(--mut)">Posição e traçado aproximados (desenho esquemático). Horários e preços: confirma no local ou no site oficial.</p>`;
+   sh.classList.add('open')};
+  pg.addEventListener('click',open);pg.addEventListener('keydown',e=>{if(e.key=='Enter')open()})});
+ gs.push(t)});
+const _ap=apply;
+apply=function(){_ap();const k=vb.w/R.width,z=FW/vb.w;
+ gs.forEach(t=>{const sx=(t.x-vb.x)/k,sy=(t.y-vb.y)/k,on=z>=8&&sx>-R.width&&sx<2*R.width&&sy>-R.height&&sy<2*R.height;t.g.style.display=on?'':'none';if(!on)return;
+  t.l.forEach(l=>{l.g.style.display=z>=(l.mj?8:12)?'':'none';l.e.setAttribute('transform',`translate(${l.x} ${l.y}) rotate(${l.a}) scale(${k})`);l.e.style.display=z>=(l.mj?14:20)?'':'none'});
+  t.q.forEach(q=>{const v=F[q.c]&&z>=10;q.g.style.display=v?'':'none';if(v){q.g.setAttribute('transform',`translate(${q.x} ${q.y}) scale(${k})`);q.t.style.display=z>=18?'':'none'}})});
+ if(me)me.setAttribute('transform',`translate(${me.px} ${me.py}) scale(${k})`)};
+// ---------- barra: saltar para cidade + filtros
+const h=document.querySelector('header'),row=document.createElement('div');row.className='row';row.style.marginTop='6px';
+row.innerHTML=T.map(t=>`<button class="ch" data-j="${t.id}">🔎 ${t.n}</button>`).join('')+Object.keys(C).map(c=>`<button class="ch on" data-c="${c}">${C[c][0]} ${C[c][2]}</button>`).join('');
+h.appendChild(row);
+row.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{const t=T.find(t=>t.id==b.dataset.j);closeAll();go(t.x,t.y,t.id=='str'?34:24)});
+row.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{b.classList.toggle('on');F[b.dataset.c]=b.classList.contains('on')?1:0;apply()});
+// ---------- "Estou aqui"
+const fb=document.createElement('button');fb.className='fab';fb.style.top='148px';fb.setAttribute('aria-label','A minha posição');fb.textContent='◎';$('wrap').appendChild(fb);
+fb.onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{if(!me)me=E('circle',{r:8,fill:'#1767b5',stroke:'#fff','stroke-width':3});
+ me.px=X(p.coords.longitude);me.py=Y(p.coords.latitude);go(me.px,me.py,24)},()=>alert('Sem acesso à localização. Ativa-a nas definições do browser.'),{enableHighAccuracy:true}):alert('Localização indisponível neste dispositivo.');
+apply();
+})();
 </script>
 </body>
 </html>
